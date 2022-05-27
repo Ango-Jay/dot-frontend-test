@@ -1,5 +1,6 @@
 const Koa = require("koa");
 const Router = require("koa-router");
+const serve = require("koa-static")
 
 const app = new Koa();
 const router = new Router();
@@ -274,3 +275,11 @@ app.use(router.routes()).use(router.allowedMethods());
 
 app.listen(port);
 console.log("App is listening on port " + port);
+//Server static assets if in production
+if (process.env.NODE_ENV === "production") {
+  //Set static folder
+  app.use(serve(path.join(__dirname, "build")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "build", "index.html"));
+  });
+}
